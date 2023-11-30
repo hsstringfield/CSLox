@@ -1,0 +1,14 @@
+C:\Users\holde\CSLox\bin\Debug\net8.0\CSLox.exe
+C:\Users\holde\CSLox\bin\Debug\net8.0\CSLox.deps.json
+C:\Users\holde\CSLox\bin\Debug\net8.0\CSLox.runtimeconfig.json
+C:\Users\holde\CSLox\bin\Debug\net8.0\CSLox.dll
+C:\Users\holde\CSLox\bin\Debug\net8.0\CSLox.pdb
+C:\Users\holde\CSLox\obj\Debug\net8.0\CSLox.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\holde\CSLox\obj\Debug\net8.0\CSLox.AssemblyInfoInputs.cache
+C:\Users\holde\CSLox\obj\Debug\net8.0\CSLox.AssemblyInfo.cs
+C:\Users\holde\CSLox\obj\Debug\net8.0\CSLox.csproj.CoreCompileInputs.cache
+C:\Users\holde\CSLox\obj\Debug\net8.0\CSLox.dll
+C:\Users\holde\CSLox\obj\Debug\net8.0\refint\CSLox.dll
+C:\Users\holde\CSLox\obj\Debug\net8.0\CSLox.pdb
+C:\Users\holde\CSLox\obj\Debug\net8.0\CSLox.genruntimeconfig.cache
+C:\Users\holde\CSLox\obj\Debug\net8.0\ref\CSLox.dll
