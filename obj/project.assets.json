@@ -8,19 +8,19 @@
     "net8.0": []
   },
   "packageFolders": {
-    "C:\\Users\\holde\\.nuget\\packages\\": {}
+    "/home/codespace/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\holde\\CSLox\\CSLox.csproj",
+      "projectUniqueName": "/workspaces/CSLox/CSLox.csproj",
       "projectName": "CSLox",
-      "projectPath": "C:\\Users\\holde\\CSLox\\CSLox.csproj",
-      "packagesPath": "C:\\Users\\holde\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\holde\\CSLox\\obj\\",
+      "projectPath": "/workspaces/CSLox/CSLox.csproj",
+      "packagesPath": "/home/codespace/.nuget/packages/",
+      "outputPath": "/workspaces/CSLox/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\holde\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/codespace/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -59,7 +59,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/opt/dotnet/8.0.100/sdk/8.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

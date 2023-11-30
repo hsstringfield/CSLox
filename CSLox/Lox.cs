@@ -1,7 +1,4 @@
 // C Sharp Lox by Holden Stringfield
-// Comments describe purpose as well as reference section in book
-// Some sections may not have comments as they aren't necessary bc method is simple
-// Updates to previous methods will summarize change and reference section
 
 
 
