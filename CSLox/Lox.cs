@@ -79,11 +79,19 @@ namespace Lox{
             Scanner scanner = new Scanner(source);
             List<Token> tokens = scanner.scanTokens();
 
-            // Print tokens test
+            /* Print tokens test, Chapter 4
             Console.Write("\n");
             foreach(Token token in tokens){
                 Console.Write(token.toString() + "\n");
-            }
+            }*/
+
+            Parser parser = new Parser(tokens);
+            Expr expression = parser.parse();
+
+            if(hadError) return;
+
+            AstPrinter example = new AstPrinter();
+            Console.Write(example.print(expression));
 
         }
 
@@ -116,6 +124,21 @@ namespace Lox{
         }
 
 
+
+        /// <summary>
+        /// Method for throwing errors from parser, 6.3.2
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="message"></param>
+        public static void error(Token token, string message){
+
+            if(token.type ==TokenType.EOF){
+                report(token.line, "at end", message);
+            }else{
+                report(token.line, "at '" + token.lexeme + "'", message);
+            }
+
+        }
 
 
 

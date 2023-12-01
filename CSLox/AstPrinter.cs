@@ -1,7 +1,7 @@
 // File to print AST, section 5.4
 
 
-/*
+
 using System.Text;
 using System.IO;
 
@@ -125,4 +125,3 @@ namespace Lox{
         }
     }
 }
-*/
