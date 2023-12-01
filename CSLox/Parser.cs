@@ -4,8 +4,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Dynamic;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace Lox{
@@ -91,7 +93,7 @@ namespace Lox{
 
 
         /// <summary>
-        /// 
+        /// Method for declarations, 8.2.2
         /// </summary>
         /// <returns></returns>
         private Stmt declaration(){
@@ -114,7 +116,14 @@ namespace Lox{
         /// <returns></returns>
         private Stmt statement(){
 
+            // for loop, 9.5.1
+            if(match(TokenType.FOR)) return forStatement();
+            // if statement, 9.2
+            if(match(TokenType.IF)) return ifStatement();
+            // print statement 8.1.2
             if(match(TokenType.PRINT)) return printStatement();
+            //while loop, 9.4
+            if(match(TokenType.WHILE)) return whileStatement();
             if(match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
             return expressionStatement();
 
@@ -123,7 +132,86 @@ namespace Lox{
 
 
         /// <summary>
-        /// Method for printing, checks for ;, 6.2.1
+        /// Method for for statement, 9.5.1
+        /// </summary>
+        /// <returns></returns>
+        private Stmt forStatement(){
+
+            // check error
+            consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+            // check initializer in first field
+            Stmt initializer;
+            if(match(TokenType.SEMICOLON)){
+                initializer = null;
+            } else if(match(TokenType.VAR)){
+                initializer = varDeclaration();
+            } else{
+                initializer = expressionStatement();
+            }
+
+            // check conditional in second field
+            Expr condition = null;
+            if(!check(TokenType.SEMICOLON)){
+                condition = expression();
+            }
+
+            // check error
+            consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+            // increment check in third field
+            Expr increment = null;
+            if(!check(TokenType.RIGHT_PAREN)){
+                increment = expression();
+            }
+
+            // check error, make body
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+            Stmt body = statement();
+
+            // increment body to desugar
+            if(increment != null){
+                body = new Stmt.Block(new List<Stmt>{body, new Stmt.Expression(increment)});
+            }
+
+            if(condition == null) condition = new Expr.Literal(true);
+            body = new Stmt.While(condition, body);
+
+            if(initializer != null){
+                body = new Stmt.Block(new List<Stmt>{initializer, body});
+            }
+
+            return body;
+
+        }
+
+
+
+        /// <summary>
+        /// If statement parser, 9.2
+        /// </summary>
+        /// <returns></returns>
+        private Stmt ifStatement(){
+
+            // check for errors, make instance if not
+            consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+            Expr condition = expression();
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
+
+            // split into branches, else if there is an else
+            Stmt thenBranch = statement();
+            Stmt elseBranch = null;
+            if(match(TokenType.ELSE)) elseBranch = statement();
+
+            // return
+            return new Stmt.If(condition, thenBranch, elseBranch);
+
+        }
+
+
+
+        /// <summary>
+        /// Method for printing, checks for ;, 8.2.1
         /// </summary>
         /// <returns></returns>
         private Stmt printStatement(){
@@ -157,11 +245,28 @@ namespace Lox{
 
 
         /// <summary>
+        /// Method for while statements, 9.4
+        /// </summary>
+        /// <returns></returns>
+        private Stmt whileStatement(){
+
+            consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'");
+            Expr condition = expression();
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after condition");
+            Stmt body = statement();
+
+            return new Stmt.While(condition, body);
+
+        }
+
+
+
+        /// <summary>
         /// Method for statements, checks for;, 6.2.1
         /// </summary>
         /// <returns></returns>
         private Stmt expressionStatement(){
-
+            
             Expr expr = expression();
             consume(TokenType.SEMICOLON, "Expect ';' after expression.");
             return new Stmt.Expression(expr);
@@ -192,12 +297,13 @@ namespace Lox{
 
 
         /// <summary>
-        /// Memthod for assignment, 8.4.1
+        /// Method for assignment, 8.4.1
         /// </summary>
         /// <returns></returns>
         private Expr assignment(){
 
-            Expr expr = equality();
+            // changed to or() in 9.3
+            Expr expr = or();
 
             if(match(TokenType.EQUAL)){
 
@@ -212,6 +318,50 @@ namespace Lox{
                 }
 
                 error(equals, "Invalid assignment target.");
+
+            }
+
+            return expr;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for keyword or, 9.3
+        /// </summary>
+        /// <returns></returns>
+        private Expr or(){
+            
+            Expr expr = and();
+
+            while(match(TokenType.OR)){
+
+                Token oper = previous();
+                Expr right = and();
+                expr = new Expr.Logical(expr, oper, right);
+
+            }
+
+            return expr;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for keyword and, 9.3
+        /// </summary>
+        /// <returns></returns>
+        private Expr and(){
+
+            Expr expr = equality();
+
+            while(match(TokenType.AND)){
+
+                Token oper = previous();
+                Expr right = equality();
+                expr = new Expr.Logical(expr, oper, right);
 
             }
 

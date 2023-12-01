@@ -3,7 +3,7 @@
 This is an interpreter for the language Lox as described in the book Crafting Interpreters by Robert Nystrom. I wrote this for CS 403 taught by Professer Don Yessick. 
 
 ## Current Chapter
-Finished 8
+Finished 9
 
 ## Notes
 
@@ -19,7 +19,7 @@ console.Write("\n")
 
 foreach(Token token in tokens){
 
-    Console.Write(token.toString() + "\n");
+Console.Write(token.toString() + "\n");
 
 }
 
@@ -253,3 +253,49 @@ I ran the test example that was in the book (titled Test1.txt) and it returned c
 > global b
 
 > globabl c
+
+###### Chapter 6
+
+I ran the test example and one of each kind of control flow, test cases can be found in Test2.txt. 
+
+Book Example:
+
+> 0
+
+> 1
+
+> 1
+
+> 2
+
+> 3
+ 
+> 5
+
+> 8
+
+> 13
+
+> 21
+
+> 34
+
+> 55
+
+> 89
+
+If statement:
+
+> C bigger or equal
+
+While statement:
+
+> Hello!
+
+> Hello!
+
+> Hello!
+
+> Hello!
+
+> Hello!

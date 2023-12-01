@@ -38,6 +38,7 @@ namespace GenerateAST{
                 "Binary   : Expr left, Token oper, Expr right",
                 "Grouping : Expr expression",
                 "Literal  : Object value",
+                "Logical  : Expr left, Token oper, Expr right",
                 "Unary    : Token oper, Expr right",
                 "Variable : Token name"
             });
@@ -46,8 +47,10 @@ namespace GenerateAST{
             defineAst(outputDir, "Stmt", new List<string>{
                 "Block      : List<Stmt> statements",
                 "Expression : Expr expression",
+                "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
                 "Print      : Expr expression",
-                "Var        : Token name, Expr initializer"
+                "Var        : Token name, Expr initializer",
+                "While      : Expr condition, Stmt body"
             });
 
         }

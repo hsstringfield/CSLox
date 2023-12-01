@@ -15,6 +15,8 @@ namespace Lox{
 
         private Environment environment = new Environment();
 
+
+
         /* interpret for Ch 7
         /// <summary>
         /// API for interpreter, 7.4
@@ -60,6 +62,27 @@ namespace Lox{
         public object visitLiteralExpr(Expr.Literal expr){
 
             return expr.value;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for visiting logical, 9.3
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object visitLogicalExpr(Expr.Logical expr){
+
+            object left = evaluate(expr.left);
+
+            if(expr.oper.type == TokenType.OR){
+                if(isTruthy(left)) return left;
+            } else{
+                if(!isTruthy(left)) return left;
+            }
+
+            return evaluate(expr.right);
 
         }
 
@@ -287,6 +310,27 @@ namespace Lox{
 
 
         /// <summary>
+        /// Behavior for visiting if statement, 9.2
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        public object visitIfStmt(Stmt.If stmt){
+
+            if(isTruthy(evaluate(stmt.condition))){
+                execute(stmt.thenBranch);
+            } else if(stmt.elseBranch != null){
+
+                execute(stmt.elseBranch);
+
+            }
+
+            return null;
+
+        }
+
+
+
+        /// <summary>
         /// Behavior for visiting print statement, 8.1.3
         /// </summary>
         /// <param name="stmt"></param>
@@ -320,6 +364,23 @@ namespace Lox{
 
             // define variable and return
             environment.define(stmt.name.lexeme, value);
+            return null;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for visiting while statements, 9.4
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        public object visitWhileStmt(Stmt.While stmt){
+
+            while(isTruthy(evaluate(stmt.condition))){
+                execute(stmt.body);
+            }
+
             return null;
 
         }

@@ -1,0 +1,23 @@
+var a = 0;
+var temp;
+
+for (var b = 1; a < 100; b = temp + b) {
+  print a;
+  temp = a;
+  a = b;
+}
+
+var c = 2;
+var d = 1;
+if (c >= d){
+  print "C bigger or equal";
+} else {
+  print "D bigger";
+}
+
+c = 0;
+d = 5;
+while(c < d){
+  print "Hello!";
+  c = c + 1;
+}
