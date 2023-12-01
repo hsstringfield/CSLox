@@ -9,9 +9,13 @@ using System.Collections.Generic;
 namespace Lox{
 
     public class Lox{
-        
-        // detects errors, section 4.1.1
+
+        // instance of interpreter, 7.4.2
+        private static readonly Interpreter interpreter = new Interpreter();
+        // true if detects errors, section 4.1.1
         private static bool hadError = false; 
+        // true if detects runtime errors, section 7.4.1
+        private static bool hadRuntimeError = false;
 
 
 
@@ -43,6 +47,8 @@ namespace Lox{
 
             // exit if hadError true, section 4.1.1
             if(hadError) System.Environment.Exit(65);
+            // exit if hadRuntimeError ture, section 7.4.1
+            if(hadRuntimeError) System.Environment.Exit(70);
 
         }
 
@@ -55,8 +61,8 @@ namespace Lox{
             // loop
             for(;;){
                 
-                // show where to input, take input and run, if empty break
-                Console.Write("> ");
+                // show where to input, take input and run, if empty break, added newline for better spacing
+                Console.Write("\n> ");
                 string line = Console.ReadLine();
                 if(line == null) break;
                 run(line);
@@ -90,8 +96,12 @@ namespace Lox{
 
             if(hadError) return;
 
+            /* Print expressions test, Chapter 6
             AstPrinter example = new AstPrinter();
             Console.Write(example.print(expression));
+            */
+
+            interpreter.interpret(expression);
 
         }
 
@@ -140,6 +150,18 @@ namespace Lox{
 
         }
 
+
+
+        /// <summary>
+        /// Method for throwing runtime errors from interpreter, 7.4.1
+        /// </summary>
+        /// <param name="error"></param>
+        public static void runtimeError(RuntimeError error){
+
+            Console.Error.Write(error.Message + " [ line " + error.token.line + "]");
+            hadRuntimeError = true;
+
+        }
 
 
     }

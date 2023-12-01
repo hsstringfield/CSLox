@@ -3,7 +3,7 @@
 This is an interpreter for the language Lox as described in the book Crafting Interpreters by Robert Nystrom. I wrote this for CS 403 taught by Professer Don Yessick. 
 
 ## Current Chapter
-Finished 6
+Finished 7
 
 ## Notes
 
@@ -16,8 +16,11 @@ I commented the sections each bit of code was from as well as its general purpos
 I changed what was in the book to be :
 
 console.Write("\n")
+
 foreach(Token token in tokens){
+
     Console.Write(token.toString() + "\n");
+
 }
 
 I ran several test cases that all worked. For the sake of example here's one that includes all types and its output:
@@ -109,3 +112,122 @@ nil + 2
 1 < 2 < 3 < 4
 
 > (< (< (< 1 2) 3) 4)
+
+###### Chapter 7
+
+Tested operators properly showing values and grouping:
+
+(1 + (2 * 3)) / (-1 - -2 * 4)
+Order of operations, parenthetical grouping, addition, subtraction, multiplication, division, negative nums working
+
+> 1
+
+All comparisons tested.
+
+1 == 1
+
+> True
+
+1 == 2
+
+> False
+
+2 > 1
+
+> True
+
+1 > 2
+
+> False
+
+2 >= 1
+
+> True
+
+2 >= 2
+
+> True
+
+1 >= 2
+
+> False
+
+1 < 2
+
+> True
+
+2 < 1
+
+> False
+
+1<=2
+
+> True
+
+1 <= 1
+
+> True
+
+2 <= 1
+
+> False
+
+1 != 2
+
+> True
+
+1 != 1
+
+> False
+
+String Concatenation:
+
+"hello" + " world"
+
+> hello world
+
+Errors:
+
+-
+
+> [line 1] Error at end: Expect expression.
+
+!
+
+> [line 1] Error at end: Expect expression.
+
+1 + 
+
+> [line 1] Error at end: Expect expression.
+
+1 -
+
+> [line 1] Error at end: Expect expression.
+
+1 *
+
+> [line 1] Error at end: Expect expression.
+
+1 /
+
+> [line 1] Error at end: Expect expression.
+
+1 <
+
+> [line 1] Error at end: Expect expression.
+
+1 <=
+
+> [line 1] Error at end: Expect expression.
+
+1 >
+
+> [line 1] Error at end: Expect expression.
+
+1 >=
+
+> [line 1] Error at end: Expect expression.
+
+(1 + 2
+
+> [line 1] Error at end: Expect ')' after expression.
