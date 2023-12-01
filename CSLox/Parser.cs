@@ -35,18 +35,44 @@ namespace Lox{
 
 
 
+        /* Temporary Parse method for ch 6 + 7
         /// <summary>
         /// Parse method, 6.4
         /// </summary>
         /// <returns></returns>
         public Expr parse(){
 
+            
             try{
                 return expression();
             }catch(ParseError error){
                 return null;
             }
             
+
+        }
+        */
+
+
+
+        /// <summary>
+        /// Method to parse through code, 8.1.2
+        /// </summary>
+        /// <returns></returns>
+        public List<Stmt> parse(){
+
+            // create list of statements
+            List<Stmt> statements = new List<Stmt>();
+
+            // iterate through until end
+            while(!isAtEnd()){
+
+                statements.Add(declaration());
+
+            }
+
+            return statements;
+
         }
 
 
@@ -57,7 +83,139 @@ namespace Lox{
         /// <returns></returns>
         private Expr expression(){
 
-            return equality();
+            // changed to assignment, 8.4.1
+            return assignment();
+
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private Stmt declaration(){
+
+            try{
+                if(match(TokenType.VAR)) return varDeclaration();
+                return statement();
+            }catch (ParseError error){
+                synchronize();
+                return null;
+            }
+
+        }
+    
+
+
+        /// <summary>
+        /// Determines proper statement and redirects, 6.2.1
+        /// </summary>
+        /// <returns></returns>
+        private Stmt statement(){
+
+            if(match(TokenType.PRINT)) return printStatement();
+            if(match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
+            return expressionStatement();
+
+        }
+
+
+
+        /// <summary>
+        /// Method for printing, checks for ;, 6.2.1
+        /// </summary>
+        /// <returns></returns>
+        private Stmt printStatement(){
+
+            Expr value = expression();
+            consume(TokenType.SEMICOLON, "Expect ';' after value.");
+            return new Stmt.Print(value);
+
+        }
+
+
+
+        /// <summary>
+        /// Method for declaration statements, 8.2.2
+        /// </summary>
+        /// <returns></returns>
+        private Stmt varDeclaration(){
+
+            Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+            Expr initializer = null;
+            if(match(TokenType.EQUAL)){
+                initializer = expression();
+            }
+
+            consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+            return new Stmt.Var(name, initializer);
+
+        }
+
+
+
+        /// <summary>
+        /// Method for statements, checks for;, 6.2.1
+        /// </summary>
+        /// <returns></returns>
+        private Stmt expressionStatement(){
+
+            Expr expr = expression();
+            consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+            return new Stmt.Expression(expr);
+
+        }
+
+
+
+        /// <summary>
+        /// Method for dealing with blocks in code, 8.5.2
+        /// </summary>
+        /// <returns></returns>
+        private List<Stmt> block(){
+
+            List<Stmt> statements = new List<Stmt>();
+
+            while(!check(TokenType.RIGHT_BRACE) && !isAtEnd()){
+
+                statements.Add(declaration());
+
+            }
+
+            consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+            return statements;
+
+        }
+
+
+
+        /// <summary>
+        /// Memthod for assignment, 8.4.1
+        /// </summary>
+        /// <returns></returns>
+        private Expr assignment(){
+
+            Expr expr = equality();
+
+            if(match(TokenType.EQUAL)){
+
+                Token equals = previous();
+                Expr value = assignment();
+
+                if(expr is Expr.Variable){
+
+                    Token name = ((Expr.Variable) expr).name;
+                    return new Expr.Assign(name, value);
+
+                }
+
+                error(equals, "Invalid assignment target.");
+
+            }
+
+            return expr;
 
         }
 
@@ -183,6 +341,13 @@ namespace Lox{
             if (match(TokenType.NUMBER, TokenType.STRING)) {
 
                 return new Expr.Literal(previous().literal);
+
+            }
+
+            // added support for variables 8.2.2
+            if(match(TokenType.IDENTIFIER)){
+
+                return new Expr.Variable(previous());
 
             }
 

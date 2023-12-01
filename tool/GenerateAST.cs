@@ -31,14 +31,25 @@ namespace GenerateAST{
 
             }
 
-            // create output and populate
+            // create output for Expr and populate
             string outputDir = args[0];
             defineAst(outputDir, "Expr", new List<string>{
+                "Assign   : Token name, Expr value",
                 "Binary   : Expr left, Token oper, Expr right",
                 "Grouping : Expr expression",
                 "Literal  : Object value",
-                "Unary    : Token oper, Expr right"
+                "Unary    : Token oper, Expr right",
+                "Variable : Token name"
             });
+
+            // create output for Stmt and populate, 8.1.1
+            defineAst(outputDir, "Stmt", new List<string>{
+                "Block      : List<Stmt> statements",
+                "Expression : Expr expression",
+                "Print      : Expr expression",
+                "Var        : Token name, Expr initializer"
+            });
+
         }
 
 

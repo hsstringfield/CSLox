@@ -92,7 +92,7 @@ namespace Lox{
             }*/
 
             Parser parser = new Parser(tokens);
-            Expr expression = parser.parse();
+            List<Stmt> statements = parser.parse();
 
             if(hadError) return;
 
@@ -101,7 +101,7 @@ namespace Lox{
             Console.Write(example.print(expression));
             */
 
-            interpreter.interpret(expression);
+            interpreter.interpret(statements);
 
         }
 

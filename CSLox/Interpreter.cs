@@ -7,13 +7,15 @@ using System.Collections.Generic;
 
 namespace Lox{
 
+    // added Stmt.Visitor, 8.1.3
     /// <summary>
-    /// Interpreter class will ... interpret code, 7.2
+    /// Interpreter class to interpret code, 7.2
     /// </summary>
-    public class Interpreter : Expr.Visitor<object>{
+    public class Interpreter : Expr.Visitor<object>, Stmt.Visitor<object>{
 
+        private Environment environment = new Environment();
 
-
+        /* interpret for Ch 7
         /// <summary>
         /// API for interpreter, 7.4
         /// </summary>
@@ -21,9 +23,27 @@ namespace Lox{
         public void interpret(Expr expression){
 
             try{
-
                 object value = evaluate(expression);
                 Console.Write(stringify(value));
+            }catch(RuntimeError error){
+                Lox.runtimeError(error);
+            }
+
+        }
+        */
+
+
+
+        /// <summary>
+        /// API for interpreter, changed to execute list of statements, 8.1.3
+        /// </summary>
+        /// <param name="expression"></param>
+        public void interpret(List<Stmt> statements){
+
+            try{
+                foreach(Stmt statement in statements){
+                    execute(statement);
+                }
             }catch(RuntimeError error){
                 Lox.runtimeError(error);
             }
@@ -81,6 +101,19 @@ namespace Lox{
             // unreachable
             return null;
 
+        }
+
+
+
+        /// <summary>
+        /// Behavior for variable expr, 8.3.1
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object visitVariableExpr(Expr.Variable expr){
+
+            return environment.get(expr.name);
+        
         }
 
 
@@ -183,6 +216,126 @@ namespace Lox{
         private object evaluate(Expr expr){
 
             return expr.accept(this);
+
+        }
+
+
+
+        /// <summary>
+        /// Method to execute stmts, 8.1.3
+        /// </summary>
+        /// <param name="stmt"></param>
+        private void execute(Stmt stmt){
+
+            stmt.accept(this);
+
+        }
+
+
+
+        /// <summary>
+        /// Method to execute a block, 8.5.2
+        /// </summary>
+        /// <param name="statements"></param>
+        /// <param name="environment"></param>
+        public void executeBlock(List<Stmt> statements, Environment environment){
+        
+            Environment previous = this.environment;
+            try{
+                this.environment = environment;
+
+                foreach(Stmt statement in statements){
+
+                    execute(statement);
+
+                }
+            } finally{
+
+                this.environment = previous;
+
+            }
+        }
+
+
+
+        /// <summary>
+        /// Behavior for block statements, 8.5.2
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        public object visitBlockStmt(Stmt.Block stmt){
+
+            executeBlock(stmt.statements, new Environment(environment));
+            return null;
+
+        }
+    
+
+
+        /// <summary>
+        /// Behavior for visiting expression statement, 8.1.3
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        public object visitExpressionStmt(Stmt.Expression stmt){
+
+            evaluate(stmt.expression);
+            return null;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for visiting print statement, 8.1.3
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        public object visitPrintStmt(Stmt.Print stmt){
+
+            object value = evaluate(stmt.expression);
+            Console.Write(stringify(value) + "\n");
+            return null;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for visiting variable statement, 8.3.1
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        public object visitVarStmt(Stmt.Var stmt){
+
+            // initialize to null
+            object value = null;
+
+            // check if initializor changes
+            if(stmt.initializer != null){
+
+                value = evaluate(stmt.initializer);
+
+            }
+
+            // define variable and return
+            environment.define(stmt.name.lexeme, value);
+            return null;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for visiting assignment expressions, 8.4.2
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object visitAssignExpr(Expr.Assign expr){
+
+            object value = evaluate(expr.value);
+            environment.assign(expr.name, value);
+            return value;
 
         }
 

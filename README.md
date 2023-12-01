@@ -3,7 +3,7 @@
 This is an interpreter for the language Lox as described in the book Crafting Interpreters by Robert Nystrom. I wrote this for CS 403 taught by Professer Don Yessick. 
 
 ## Current Chapter
-Finished 7
+Finished 8
 
 ## Notes
 
@@ -231,3 +231,25 @@ Errors:
 (1 + 2
 
 > [line 1] Error at end: Expect ')' after expression.
+
+###### Chapter 8
+
+I ran the test example that was in the book (titled Test1.txt) and it returned correctly:
+
+> inner a
+
+> outer b
+
+> global c
+
+> outer a
+
+> outer b
+
+> global c
+
+> global a
+
+> global b
+
+> globabl c
