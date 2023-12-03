@@ -1,0 +1,5 @@
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/publish/CSLox
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/publish/CSLox.dll
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/publish/CSLox.deps.json
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/publish/CSLox.runtimeconfig.json
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/publish/CSLox.pdb

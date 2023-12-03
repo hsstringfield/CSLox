@@ -1,9 +1,10 @@
 # CSLox 
 
 This is an interpreter for the language Lox as described in the book Crafting Interpreters by Robert Nystrom. I wrote this for CS 403 taught by Professer Don Yessick. 
+I've attatched a makefile which when executed will run the 6 attatched test cases.
 
 ## Current Chapter
-Finished 12
+Finished 13
 
 ## Notes
 
@@ -348,7 +349,7 @@ Fourth example, returned error properly, shows top level return error works prop
 
 > [line 22] Error at 'return': Can't return from top-level code.
 
-###### Chapter 11
+###### Chapter 12
 
 Changes:
 
@@ -374,4 +375,32 @@ Test 3 returned properly, wish shows that class methods work.
 
 > Crunch crunch crunch!
 
+Test 4 returned properly, showing this working properly.
 
+> The German chocolate cake is delicious!
+
+###### Chapter 13
+
+Issues:
+
+Although test for this chapter worked, I went back and ran it for the tests in previous chapters and got an error for Test 1, 2, 3, and 4 due to the Can't read local variable in it's own initializer. error. It seems like the code is not checking higher scopes, just the one it is currently in for the value of the variable in the check. This doesn't make any sense as without the check, it still runs properly and sets variables within the correct scope.
+
+After spending a very long time, I can't seem to find an issue anywhere else, or why this is happening. So, I will just be ommmiting this portion from the code as it seems to work perfectly without it.
+
+Testing:
+
+Used test throughout chapter to and they were correct, Test6.txt is file.
+
+Test 1 returned properly, showing that base inheritance and methods worked.
+
+> Fry until golden brown.
+
+Test 2 returned properly, showing that super works correctly.
+
+> Fry until golden brown.
+
+> Pipe full of custard and coat with chocolate.
+
+Test 3 returned properly, showing that super works correctly when needing to determine which superclass to inherit.
+
+> A method

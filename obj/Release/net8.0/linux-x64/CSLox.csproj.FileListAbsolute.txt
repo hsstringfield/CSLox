@@ -1,0 +1,15 @@
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/CSLox
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/CSLox.deps.json
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/CSLox.runtimeconfig.json
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/CSLox.dll
+/workspaces/CSLox/bin/Release/net8.0/linux-x64/CSLox.pdb
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/CSLox.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/CSLox.AssemblyInfoInputs.cache
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/CSLox.AssemblyInfo.cs
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/CSLox.csproj.CoreCompileInputs.cache
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/CSLox.sourcelink.json
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/CSLox.dll
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/refint/CSLox.dll
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/CSLox.pdb
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/CSLox.genruntimeconfig.cache
+/workspaces/CSLox/obj/Release/net8.0/linux-x64/ref/CSLox.dll

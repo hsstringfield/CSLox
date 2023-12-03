@@ -51,7 +51,8 @@ namespace Lox{
         private enum ClassType {
 
             NONE,
-            CLASS
+            CLASS,
+            SUBCLASS
 
         }
 
@@ -105,7 +106,7 @@ namespace Lox{
 
             if(scopes.Count < 1) return;
 
-            var scope = scopes[scopes.Count - 1];
+            Dictionary<string, bool> scope = scopes[scopes.Count - 1];
 
             // added to check if already exists, return error, 11.5
             if(scope.ContainsKey(name.lexeme)){
@@ -184,6 +185,30 @@ namespace Lox{
             declare(stmt.name);
             define(stmt.name);
 
+            // added for inheritance, 13.1
+
+            if (stmt.superclass != null && stmt.name.lexeme.Equals(stmt.superclass.name.lexeme)) {
+
+                Lox.error(stmt.superclass.name, "A class can't inherit from itself.");
+
+            }
+
+            if (stmt.superclass != null) {
+
+                // added for error checking, 13.3.3
+                currentClass = ClassType.SUBCLASS;
+                resolve(stmt.superclass);
+
+            }
+
+            // add for super, 13.3.2
+            if (stmt.superclass != null) {
+
+                beginScope();
+                scopes[scopes.Count - 1].Add("super", true);
+
+            }
+
             // added for this, 12.6
             beginScope();
             scopes[scopes.Count - 1].Add("this", true);
@@ -202,6 +227,8 @@ namespace Lox{
             }
 
             endScope();
+
+            if (stmt.superclass != null) endScope();
 
             currentClass = enclosingClass;
             return null;
@@ -457,6 +484,31 @@ namespace Lox{
 
 
         /// <summary>
+        /// Behavior for visiting super expr w proper scope, 13.3.2
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object visitSuperExpr(Expr.Super expr) {
+
+            // added for error checking, 13.3.3
+            if (currentClass == ClassType.NONE) {
+
+                Lox.error(expr.keyword, "Can't use 'super' outside of a class.");
+
+            } else if (currentClass != ClassType.SUBCLASS) {
+
+            Lox.error(expr.keyword, "Can't use 'super' in a class with no superclass.");
+
+            }
+
+            resolveLocal(expr, expr.keyword);
+            return null;
+
+        }
+
+
+
+        /// <summary>
         /// Behavior for visiting this expr w proper scope, 12.6
         /// </summary>
         /// <param name="expr"></param>
@@ -499,11 +551,7 @@ namespace Lox{
         /// <returns></returns>
         public object visitVariableExpr(Expr.Variable expr){
 
-                if(!(scopes.Count < 1) && scopes[scopes.Count - 1].TryGetValue(expr.name.lexeme, out bool value) == false){
-
-                    Lox.error(expr.name, "Can't read local variable in its own initializer.");
-
-                }
+            
 
             resolveLocal(expr, expr.name);
             return null;

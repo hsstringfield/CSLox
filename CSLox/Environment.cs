@@ -12,7 +12,7 @@ namespace Lox{
     /// </summary>
     public class Environment{
 
-        private readonly Environment enclosing;
+        public readonly Environment enclosing;
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
 
 

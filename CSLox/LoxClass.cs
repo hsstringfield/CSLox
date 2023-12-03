@@ -13,6 +13,7 @@ namespace Lox{
     public class LoxClass : LoxCallable{
 
         public string name;
+        public LoxClass superclass;
         private readonly Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
 
 
@@ -21,8 +22,9 @@ namespace Lox{
         /// LoxClass constructor, 12.2, changed to have methods, 12.5
         /// </summary>
         /// <param name="name"></param>
-        public LoxClass(string name, Dictionary<string, LoxFunction> methods) {
+        public LoxClass(string name, LoxClass superclass, Dictionary<string, LoxFunction> methods) {
 
+            this.superclass = superclass;
             this.name = name;
             this.methods = methods;
 
@@ -42,6 +44,9 @@ namespace Lox{
             return methods[name];
 
             }
+
+            // added for inheritance 12.1.3
+            if(superclass != null) return superclass.findMethod(name);
 
             return null;
 
