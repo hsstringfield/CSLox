@@ -13,7 +13,17 @@ namespace Lox{
     /// </summary>
     public class Interpreter : Expr.Visitor<object>, Stmt.Visitor<object>{
 
-        private Environment environment = new Environment();
+        public static readonly Environment globals = new Environment();
+
+        private Environment environment = globals;
+
+
+        /// <summary>
+        /// Interpreter constructor
+        /// </summary>
+        public Interpreter(){
+            globals.define("clock", new Clock());
+        }
 
 
 
@@ -310,6 +320,21 @@ namespace Lox{
 
 
         /// <summary>
+        /// Behavior for visiting function statement, 10.4.1
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        public object visitFunctionStmt(Stmt.Function stmt){
+
+            LoxFunction function = new LoxFunction(stmt, environment);
+            environment.define(stmt.name.lexeme, function);
+            return null;
+
+        }
+
+
+
+        /// <summary>
         /// Behavior for visiting if statement, 9.2
         /// </summary>
         /// <param name="stmt"></param>
@@ -340,6 +365,23 @@ namespace Lox{
             object value = evaluate(stmt.expression);
             Console.Write(stringify(value) + "\n");
             return null;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for visiting return statement, 10.5.1
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        /// <exception cref="Return"></exception>
+        public object visitReturnStmt(Stmt.Return stmt){
+
+            object value = null;
+            if(stmt.value != null) value = evaluate(stmt.value);
+
+            throw new Return(value);
 
         }
 
@@ -464,7 +506,37 @@ namespace Lox{
 
 
 
+        /// <summary>
+        /// Behavior for visiting call expressions, 10.1.2
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object visitCallExpr(Expr.Call expr){
 
+            object callee = evaluate(expr.callee);
+
+            List<object> arguments = new List<object>();
+            foreach(Expr argument in expr.arguments){
+
+                arguments.Add(evaluate(argument));
+
+            }
+
+            if(!(callee is LoxCallable)){
+
+                throw new RuntimeError(expr.paren, "Can only call functions and classes");
+
+            }
+
+            LoxCallable function = (LoxCallable)callee;
+            if(arguments.Count != function.arity()){
+
+                throw new RuntimeError(expr.paren, "Expected " + function.arity() + " arguments but got " + arguments.Count + ".");
+
+            }
+            return function.call(this, arguments);
+
+        }
 
     }
 }

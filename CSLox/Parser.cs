@@ -4,10 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Dynamic;
-using System.Linq.Expressions;
-using System.Numerics;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 
 namespace Lox{
@@ -99,6 +96,7 @@ namespace Lox{
         private Stmt declaration(){
 
             try{
+                if(match(TokenType.FUN)) return function("function");
                 if(match(TokenType.VAR)) return varDeclaration();
                 return statement();
             }catch (ParseError error){
@@ -122,6 +120,8 @@ namespace Lox{
             if(match(TokenType.IF)) return ifStatement();
             // print statement 8.1.2
             if(match(TokenType.PRINT)) return printStatement();
+            // print statement, 10.5
+            if(match(TokenType.RETURN)) return returnStatement();
             //while loop, 9.4
             if(match(TokenType.WHILE)) return whileStatement();
             if(match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
@@ -225,6 +225,28 @@ namespace Lox{
 
 
         /// <summary>
+        /// Method for returning, 10.5
+        /// </summary>
+        /// <returns></returns>
+        private Stmt returnStatement(){
+
+            Token keyword = previous();
+            Expr value = null;
+
+            if(!check(TokenType.SEMICOLON)){
+
+                value = expression();
+
+            }
+
+            consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+            return new Stmt.Return(keyword, value);
+
+        }
+
+
+
+        /// <summary>
         /// Method for declaration statements, 8.2.2
         /// </summary>
         /// <returns></returns>
@@ -270,6 +292,44 @@ namespace Lox{
             Expr expr = expression();
             consume(TokenType.SEMICOLON, "Expect ';' after expression.");
             return new Stmt.Expression(expr);
+
+        }
+
+
+
+        /// <summary>
+        /// Function method, 10.3
+        /// </summary>
+        /// <param name="kind"></param>
+        /// <returns></returns>
+        private Stmt.Function function(string kind){
+
+            // Check for syntax
+            Token name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
+            consume(TokenType.LEFT_PAREN, "Expect '(' after " + kind + " name.");
+
+            // Initialize parameters
+            List<Token> parameters = new List<Token>();
+
+            // check if paramaters follow guidelines, check name
+            if(!check(TokenType.RIGHT_PAREN)){
+                do{
+                    if(parameters.Count >= 255){
+                        error(peek(), "Can't have more than 255 parameters.");
+                    }
+
+                    parameters.Add(consume(TokenType.IDENTIFIER, "Expect parameter name."));
+
+                } while (match(TokenType.COMMA));
+            }
+
+            // check for syntax
+            consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+            consume(TokenType.LEFT_BRACE, "Expect '{' before " + kind + " body.");
+
+            // initialize body, return function parsed
+            List<Stmt> body = block();
+            return new Stmt.Function(name, parameters, body);
 
         }
 
@@ -472,7 +532,56 @@ namespace Lox{
 
             }
 
-            return primary();
+            return call();
+
+        }
+
+
+
+        /// <summary>
+        /// Method for finishing call in 10.1
+        /// </summary>
+        /// <param name="callee"></param>
+        /// <returns></returns>
+        private Expr finishCall(Expr callee){
+
+            List<Expr> arguments = new List<Expr>();
+            if(!check(TokenType.RIGHT_PAREN)){
+                do{
+                    if(arguments.Count >= 255){
+                        error(peek(), "Can't have more than 255 arguments.");
+                    }
+                    arguments.Add(expression());
+                }while(match(TokenType.COMMA));
+            }
+
+            Token paren = consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments");
+            return new Expr.Call(callee, paren, arguments);
+
+        }
+
+
+
+        /// <summary>
+        /// Method for call in grammar, 10.1
+        /// </summary>
+        /// <returns></returns>
+        private Expr call(){
+
+            // branch to primary
+            Expr expr = primary();
+
+            // find function call
+            while(true){
+
+                if(match(TokenType.LEFT_PAREN)){
+                    expr = finishCall(expr);
+                }else{
+                    break;
+                }
+            }
+
+            return expr;
 
         }
 

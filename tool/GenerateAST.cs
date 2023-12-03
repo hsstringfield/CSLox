@@ -36,6 +36,7 @@ namespace GenerateAST{
             defineAst(outputDir, "Expr", new List<string>{
                 "Assign   : Token name, Expr value",
                 "Binary   : Expr left, Token oper, Expr right",
+                "Call     : Expr callee, Token paren, List<Expr> arguments",
                 "Grouping : Expr expression",
                 "Literal  : Object value",
                 "Logical  : Expr left, Token oper, Expr right",
@@ -48,7 +49,9 @@ namespace GenerateAST{
                 "Block      : List<Stmt> statements",
                 "Expression : Expr expression",
                 "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
+                "Function   : Token name, List<Token> prms, List<Stmt> body",
                 "Print      : Expr expression",
+                "Return     : Token keyword, Expr value",
                 "Var        : Token name, Expr initializer",
                 "While      : Expr condition, Stmt body"
             });

@@ -8,7 +8,9 @@ public abstract class Stmt {
 		R visitBlockStmt(Block stmt);
 		R visitExpressionStmt(Expression stmt);
 		R visitIfStmt(If stmt);
+		R visitFunctionStmt(Function stmt);
 		R visitPrintStmt(Print stmt);
+		R visitReturnStmt(Return stmt);
 		R visitVarStmt(Var stmt);
 		R visitWhileStmt(While stmt);
 	}
@@ -52,6 +54,22 @@ public abstract class Stmt {
 		public Stmt thenBranch;
 		public Stmt elseBranch;
 	}
+	public class Function : Stmt{
+
+		public Function(Token name, List<Token> prms, List<Stmt> body) {
+			this.name = name;
+			this.prms = prms;
+			this.body = body;
+		}
+
+		public override R accept<R>(Visitor<R> visitor){
+			return visitor.visitFunctionStmt(this);
+		}
+
+		public Token name;
+		public List<Token> prms;
+		public List<Stmt> body;
+	}
 	public class Print : Stmt{
 
 		public Print(Expr expression) {
@@ -63,6 +81,20 @@ public abstract class Stmt {
 		}
 
 		public Expr expression;
+	}
+	public class Return : Stmt{
+
+		public Return(Token keyword, Expr value) {
+			this.keyword = keyword;
+			this.value = value;
+		}
+
+		public override R accept<R>(Visitor<R> visitor){
+			return visitor.visitReturnStmt(this);
+		}
+
+		public Token keyword;
+		public Expr value;
 	}
 	public class Var : Stmt{
 
