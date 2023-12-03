@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CSLox")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6eaa839d8b6a80c11ed4f2d2ab821e46189b770e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+430878d921b49a72362db81abc7b8ddee644370b")]
 [assembly: System.Reflection.AssemblyProductAttribute("CSLox")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CSLox")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

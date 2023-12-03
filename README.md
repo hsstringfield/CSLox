@@ -313,3 +313,38 @@ Test3.txt was run for testing, it's a combination of two tests that are within c
 > 63837162952.315
 
 > 63837162952.983
+
+###### Chapter 11
+
+Changes:
+
+As per usual, instead of Void for visitors, used object.
+
+Instead of hashmap, utilized dictionary for scopes, due to this there were a lot of little changes with methods used such as .peek() or .put().
+
+Issues:
+
+Tested with Test4.txt and ran into issue with check for empty scope and seeing if variable is initialized in visitVariableExpr. Removing check made it work. Error says can't find a in dictionary, which means it's likely running into issue with checking enclosing (?) Added a check outside of if to check if variable exists inside current scope. 
+
+Testing:
+
+Used examples from chapter, in Test4.txt.
+
+First example returned properly, showing that variable resolution works correctly.
+
+> global
+
+> global
+
+Second example, returned error properly, shows referencing variable in initializer returns error works.
+
+> [line 14] Error at 'a': Can't read local variable in its own initializer.
+
+Third example, returned error properly, shows making mult static variables in function error works properly.
+
+> [line 19] Error at 'a': Already a variable with this name in this scope
+
+Fourth example, returned error properly, shows top level return error works properly.
+
+> [line 22] Error at 'return': Can't return from top-level code.
+

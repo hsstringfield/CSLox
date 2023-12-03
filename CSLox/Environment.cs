@@ -21,7 +21,9 @@ namespace Lox{
         /// Constructor for enclosing, 8.5.1
         /// </summary>
         public Environment(){
+
             enclosing = null;
+
         }
 
 
@@ -97,8 +99,54 @@ namespace Lox{
 
 
 
+        /// <summary>
+        /// Method for finding ancestor Env, 11.4.1
+        /// </summary>
+        /// <param name="distance"></param>
+        /// <returns></returns>
+        public Environment ancestor(int distance){
+
+            Environment environment = this;
+            for(int i = 0; i < distance; i++){
+
+                environment = environment.enclosing;
+
+            }
+
+            return environment;
+
+        }
+
+
+
+        /// <summary>
+        /// Method for finding variable in particular environment, 11.4.1
+        /// </summary>
+        /// <param name="distance"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public object getAt(int distance, string name){
+
+            return ancestor(distance).values[name];
+            
+        }
+
+
+
+        /// <summary>
+        /// Method for assigning variable in particular environemtn, 11.4.2
+        /// </summary>
+        /// <param name="distance"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public void assignAt(int distance, Token name, object value){
+
+            ancestor(distance).values[name.lexeme] = value;
+
+        }
+
+
+
         
-
-
     }
 }

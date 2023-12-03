@@ -16,6 +16,7 @@ namespace Lox{
         public static readonly Environment globals = new Environment();
 
         private Environment environment = globals;
+        private readonly Dictionary<Expr, int> locals = new Dictionary<Expr, int>();
 
 
         /// <summary>
@@ -145,10 +146,34 @@ namespace Lox{
         /// <returns></returns>
         public object visitVariableExpr(Expr.Variable expr){
 
-            return environment.get(expr.name);
+            // Changed to utilize resolver, 11.4.1
+            return lookUpVariable(expr.name, expr);
         
         }
 
+
+
+        /// <summary>
+        /// Method to look up variable in locals, 11.4.1
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        private object lookUpVariable(Token name, Expr expr){
+
+            if(locals.ContainsKey(expr)){
+
+                int distance = locals[expr];
+                return environment.getAt(distance, name.lexeme);
+
+            } else{
+
+                return globals.get(name);
+
+            }
+
+        }
+        
 
 
         /// <summary>
@@ -262,6 +287,19 @@ namespace Lox{
 
             stmt.accept(this);
 
+        }
+
+
+
+        /// <summary>
+        /// Method to resolve in interpreter, adds to locals, 11.4
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="depth"></param>
+        public void resolve(Expr expr, int depth) {
+
+            locals.Add(expr, depth);
+            
         }
 
 
@@ -437,7 +475,18 @@ namespace Lox{
         public object visitAssignExpr(Expr.Assign expr){
 
             object value = evaluate(expr.value);
-            environment.assign(expr.name, value);
+            
+            if(locals.ContainsKey(expr)){
+
+                int distance = locals[expr];
+                environment.assignAt(distance, expr.name, value);
+
+            }else{
+
+                globals.assign(expr.name, value);
+
+            }
+
             return value;
 
         }
