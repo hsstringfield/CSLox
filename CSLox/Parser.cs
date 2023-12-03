@@ -96,6 +96,9 @@ namespace Lox{
         private Stmt declaration(){
 
             try{
+                // added class 12.2
+                if(match(TokenType.CLASS)) return classDeclaration();
+                // added function 10.2
                 if(match(TokenType.FUN)) return function("function");
                 if(match(TokenType.VAR)) return varDeclaration();
                 return statement();
@@ -106,6 +109,28 @@ namespace Lox{
 
         }
     
+
+        
+        /// <summary>
+        /// Method for class declarations, 12.2
+        /// </summary>
+        /// <returns></returns>
+        private Stmt classDeclaration() {
+
+            Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
+            consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
+
+            List<Stmt.Function> methods = new List<Stmt.Function>();
+            while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+                methods.Add(function("method"));
+            }
+
+            consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
+
+            return new Stmt.Class(name, methods);
+
+        }
+
 
 
         /// <summary>
@@ -375,6 +400,11 @@ namespace Lox{
                     Token name = ((Expr.Variable) expr).name;
                     return new Expr.Assign(name, value);
 
+                }else if(expr is Expr.Get){
+
+                    Expr.Get get = (Expr.Get)expr;
+                    return new Expr.Set(get.Object, get.name, value);
+
                 }
 
                 error(equals, "Invalid assignment target.");
@@ -576,6 +606,13 @@ namespace Lox{
 
                 if(match(TokenType.LEFT_PAREN)){
                     expr = finishCall(expr);
+
+                // added to deal with properties, 12.4.1
+                }else if(match(TokenType.DOT)){
+
+                    Token name = consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
+                    expr = new Expr.Get(expr, name);
+
                 }else{
                     break;
                 }
@@ -602,6 +639,9 @@ namespace Lox{
                 return new Expr.Literal(previous().literal);
 
             }
+
+            // added support for this for classes, 12.6
+            if(match(TokenType.THIS)) return new Expr.This(previous());
 
             // added support for variables 8.2.2
             if(match(TokenType.IDENTIFIER)){

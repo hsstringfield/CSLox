@@ -36,7 +36,7 @@ namespace Lox{
         /// Method to return string, 10.2.1
         /// </summary>
         /// <returns></returns>
-        public static string toString() { return "<native fn"; }
+        public override string ToString() { return "<native fn"; }
 
     }
 

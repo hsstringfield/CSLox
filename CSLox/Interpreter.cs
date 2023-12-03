@@ -23,7 +23,9 @@ namespace Lox{
         /// Interpreter constructor
         /// </summary>
         public Interpreter(){
+
             globals.define("clock", new Clock());
+            
         }
 
 
@@ -94,6 +96,43 @@ namespace Lox{
             }
 
             return evaluate(expr.right);
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for visiting set expr, 10.4.2
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        /// <exception cref="RuntimeError"></exception>
+        public object visitSetExpr(Expr.Set expr) {
+
+            object Object = evaluate(expr.Object);
+
+            if (!(Object is LoxInstance)) { 
+
+            throw new RuntimeError(expr.name, "Only instances have fields.");
+
+            }
+
+            object value = evaluate(expr.value);
+            ((LoxInstance)Object).set(expr.name, value);
+            return value;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for visiting this expr, 12.6
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object visitThisExpr(Expr.This expr) {
+
+            return lookUpVariable(expr.keyword, expr);
 
         }
 
@@ -344,6 +383,33 @@ namespace Lox{
 
 
         /// <summary>
+        /// Behavior for visiting class statements, 12.2
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        public object visitClassStmt(Stmt.Class stmt) {
+
+            environment.define(stmt.name.lexeme, null);
+            
+            // added for bound methods, 12.5
+            Dictionary<string, LoxFunction> methods = new Dictionary<string, LoxFunction>();
+            foreach(Stmt.Function method in stmt.methods){
+
+                LoxFunction function = new LoxFunction(method, environment, method.name.lexeme.Equals("init"));
+                methods.Add(method.name.lexeme, function);
+
+            }
+
+            LoxClass klass = new LoxClass(stmt.name.lexeme, methods);
+
+            environment.assign(stmt.name, klass);
+            return null;
+
+        }
+
+
+
+        /// <summary>
         /// Behavior for visiting expression statement, 8.1.3
         /// </summary>
         /// <param name="stmt"></param>
@@ -364,7 +430,7 @@ namespace Lox{
         /// <returns></returns>
         public object visitFunctionStmt(Stmt.Function stmt){
 
-            LoxFunction function = new LoxFunction(stmt, environment);
+            LoxFunction function = new LoxFunction(stmt, environment, false);
             environment.define(stmt.name.lexeme, function);
             return null;
 
@@ -587,5 +653,25 @@ namespace Lox{
 
         }
 
+
+
+        /// <summary>
+        /// Behavior for visitng get expr, 12.4.1
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        /// <exception cref="RuntimeError"></exception>
+        public Object visitGetExpr(Expr.Get expr) {
+
+            object Object = evaluate(expr.Object);
+            if (Object is LoxInstance) {
+
+                return ((LoxInstance)Object).get(expr.name);
+
+            }
+
+            throw new RuntimeError(expr.name, "Only instances have properties.");
+
+        }
     }
 }

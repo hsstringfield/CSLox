@@ -38,7 +38,7 @@ namespace Lox{
         /// Method that will return values of Token, as described in 4.2.3
         /// </summary>
         /// <returns></returns>
-        public string toString(){
+        public override string ToString(){
             
             return type + " " + lexeme + " " + literal;
 

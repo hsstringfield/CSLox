@@ -3,7 +3,7 @@
 This is an interpreter for the language Lox as described in the book Crafting Interpreters by Robert Nystrom. I wrote this for CS 403 taught by Professer Don Yessick. 
 
 ## Current Chapter
-Finished 10
+Finished 12
 
 ## Notes
 
@@ -320,7 +320,7 @@ Changes:
 
 As per usual, instead of Void for visitors, used object.
 
-Instead of hashmap, utilized dictionary for scopes, due to this there were a lot of little changes with methods used such as .peek() or .put().
+Instead of hashmap and stack, utilized dictionary for scopes, due to this there were a lot of little changes with methods used such as .peek() or .put().
 
 Issues:
 
@@ -347,4 +347,31 @@ Third example, returned error properly, shows making mult static variables in fu
 Fourth example, returned error properly, shows top level return error works properly.
 
 > [line 22] Error at 'return': Can't return from top-level code.
+
+###### Chapter 11
+
+Changes:
+
+As per usual, no Void, did object instead. Also did lists instead of arrays.
+
+Issues:
+
+Ran into issue with tostring not working in test 1 of Test5.txt, was an issue with fix from last time. Instead of checking outside, should do trygetkey.
+
+Testing:
+
+Used test throughout chapter and they were correct, Test5.txt is file.
+
+Test 1 returned properly, showing class is properly being parsed and executed.
+
+> Devonshire Cream
+
+Test 2 returned properly, showing instances of classes work properly.
+
+> Bagel instance
+
+Test 3 returned properly, wish shows that class methods work.
+
+> Crunch crunch crunch!
+
 

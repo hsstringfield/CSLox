@@ -37,9 +37,25 @@ namespace Lox{
         private enum FunctionType{
 
             NONE, 
-            FUNCTION
+            FUNCTION,
+            INITIALIZER,
+            METHOD
 
         }
+
+
+
+        /// <summary>
+        /// Enum type for classes, determine if is one, 12.6
+        /// </summary>
+        private enum ClassType {
+
+            NONE,
+            CLASS
+
+        }
+
+        private ClassType currentClass = ClassType.NONE;
 
 
 
@@ -156,6 +172,45 @@ namespace Lox{
 
 
         /// <summary>
+        /// Behavior for visiting class stmts w proper scope, 12.2
+        /// </summary>
+        /// <param name="stmt"></param>
+        /// <returns></returns>
+        public object visitClassStmt(Stmt.Class stmt) {
+
+            ClassType enclosingClass = currentClass;
+            currentClass = ClassType.CLASS;
+
+            declare(stmt.name);
+            define(stmt.name);
+
+            // added for this, 12.6
+            beginScope();
+            scopes[scopes.Count - 1].Add("this", true);
+
+            foreach(Stmt.Function method in stmt.methods){
+
+                FunctionType declaration = FunctionType.METHOD;
+                
+                // sets to initializer so will not return, 12.7.2
+                if (method.name.lexeme.Equals("init")) {
+                    declaration = FunctionType.INITIALIZER;
+                }
+
+                resolveFunction(method, declaration);
+
+            }
+
+            endScope();
+
+            currentClass = enclosingClass;
+            return null;
+
+        }
+
+
+        
+        /// <summary>
         /// Behavior for visiting expr stmts w proper scope, 11.3.6
         /// </summary>
         /// <param name="stmt"></param>
@@ -230,7 +285,16 @@ namespace Lox{
 
             }
 
-            if (stmt.value != null) resolve(stmt.value);
+            // added for returning value from initializer, 12.7.2
+            if (stmt.value != null) {
+                
+                if (currentFunction == FunctionType.INITIALIZER) {
+                    Lox.error(stmt.keyword, "Can't return a value from an initializer.");
+                }
+
+                resolve(stmt.value);
+
+            }
             
 
             return null;
@@ -322,6 +386,20 @@ namespace Lox{
 
 
         /// <summary>
+        /// Behavior for visiting get expr w proper scope, 12.4.1
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object visitGetExpr(Expr.Get expr){
+
+            resolve(expr.Object);
+            return null;
+
+        }
+
+
+
+        /// <summary>
         /// Behavior for visiting group expr w proper scope, 11.3.6
         /// </summary>
         /// <param name="expr"></param>
@@ -364,6 +442,43 @@ namespace Lox{
 
 
         /// <summary>
+        /// Behavior for visiting set expr w proper scope, 12.4.2
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object visitSetExpr(Expr.Set expr) {
+
+            resolve(expr.value);
+            resolve(expr.Object);
+            return null;
+
+        }
+
+
+
+        /// <summary>
+        /// Behavior for visiting this expr w proper scope, 12.6
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public object visitThisExpr(Expr.This expr) {
+
+            // added to check for this outside class, 12.6
+            if (currentClass == ClassType.NONE) {
+
+                Lox.error(expr.keyword, "Can't use 'this' outside of a class.");
+                return null;
+
+            }
+
+            resolveLocal(expr, expr.keyword);
+            return null;
+
+        }
+
+
+
+        /// <summary>
         /// Behavior for unary expr w proper scope, 11.3.6
         /// </summary>
         /// <param name="expr"></param>
@@ -384,13 +499,11 @@ namespace Lox{
         /// <returns></returns>
         public object visitVariableExpr(Expr.Variable expr){
 
-            if(scopes[scopes.Count - 1].ContainsKey(expr.name.lexeme)){
-                if(!(scopes.Count < 1) && scopes[scopes.Count - 1][expr.name.lexeme] == false){
+                if(!(scopes.Count < 1) && scopes[scopes.Count - 1].TryGetValue(expr.name.lexeme, out bool value) == false){
 
                     Lox.error(expr.name, "Can't read local variable in its own initializer.");
 
                 }
-            }
 
             resolveLocal(expr, expr.name);
             return null;
